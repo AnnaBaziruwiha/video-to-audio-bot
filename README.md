@@ -2,6 +2,19 @@
 
 This Telegram bot converts YouTube video links into audio files and sends them back to the user. It's designed to handle videos of any duration, and for audio files larger than 50MB (the Telegram limit), it splits them into multiple files.
 
+## Technologies
+
+This project is created with:
+
+- [Python 3.10.10](https://www.python.org/downloads/release/python-31010/)
+- [python-telegram-bot 20.3](https://python-telegram-bot.readthedocs.io/en/stable/)
+- [youtube_dl 2022.3.25](https://github.com/ytdl-org/youtube-dl)
+- [pydub 0.25.1](http://pydub.com/)
+- [pytest 7.0.1](https://docs.pytest.org/en/latest/)
+- [FFmpeg](https://ffmpeg.org/)
+
+Please make sure to update tests as appropriate and keep these versions in mind when contributing.
+
 ## Setup and Installation
 
 1. Clone this repository:

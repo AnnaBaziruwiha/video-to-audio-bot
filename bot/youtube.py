@@ -2,7 +2,10 @@ from youtube_dl import YoutubeDL
 
 
 class YouTubeDownloader:
-    def download_audio(self, url):
+    """A class that downloads the video from Youtube"""
+
+    def download_audio(self, url: str) -> str:
+        """Downloads video and saves it as mp3"""
         ydl_opts = {
             "format": "bestaudio/best",
             "outtmpl": "downloads/%(title)s.%(ext)s",

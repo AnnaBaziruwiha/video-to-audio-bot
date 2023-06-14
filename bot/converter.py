@@ -5,10 +5,13 @@ from .constants import MAX_AUDIO_SIZE
 
 
 class AudioConverter:
+    """Class that converts videos to audio files and processes the audio"""
+
     def __init__(self):
         self.max_file_size_mb = MAX_AUDIO_SIZE
 
     def convert_to_mp3(self, audio_path: str) -> List[str]:
+        """Converts a video file to mp3"""
         audio = AudioSegment.from_file(audio_path, format="mp3")
         audio_size_mb = os.path.getsize(audio_path) / (1024 * 1024)
 
@@ -32,6 +35,7 @@ class AudioConverter:
 
     @staticmethod
     def _make_chunks(audio: AudioSegment, chunk_length_ms: int) -> List[AudioSegment]:
+        """Breaks large audio files into chunks"""
         return [
             audio[i : i + chunk_length_ms]
             for i in range(0, len(audio), chunk_length_ms)

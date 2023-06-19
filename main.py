@@ -1,3 +1,8 @@
+"""
+The entrypoint to the app. Starts the chosen UI
+For now, the following UI's are available:
+- Telegram UI
+"""
 import os
 from bot.bot import Bot
 from bot.converter import AudioConverter

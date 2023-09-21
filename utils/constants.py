@@ -15,5 +15,10 @@ INVALID_INPUT_MESSAGE = """
 Whoa there! 🛑 Seems like you've sent something that doesn't look like a YouTube link.
 🤔 Try again with a proper YouTube link and let's vibe to some cool tunes together! 🎵🤘
 """
-RESPONSE_MESSAGE = "Here comes your audio file!  〰（￣□￣）〰"
-RESPONSE_MESSAGE_ERROR = "Oops! Something went wrong.  〰（￣□￣）〰"
+RESPONSE_MESSAGE = "There you go!"
+
+WAIT_MESSAGE = """
+🌟 Awesome! We got your URL! 🌟🔗 Our code wizards 🧙‍♂️ are whipping up some magic ✨ to process it!
+Hang tight, we’ll slide into your DMs 📩 with the goodies 🎁 as soon as it’s cooked 🍳 to perfection!
+🚀 Keep rockin' 🎸 and stay cool! 😎🤘
+"""

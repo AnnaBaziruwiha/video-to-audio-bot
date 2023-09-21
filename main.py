@@ -1,25 +1,9 @@
-"""
-The entrypoint to the app. Starts the chosen UI
-For now, the following UI's are available:
-- Telegram UI
-"""
-import os
-from bot.bot import Bot
-from bot.converter import AudioConverter
-from bot.youtube import YouTubeDownloader
-from dotenv import load_dotenv
+import logging
 
-load_dotenv()
+from bot import Bot
+
+logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
 
 if __name__ == "__main__":
-    print("Retrieving token...")
-
-    token = os.getenv("TELEGRAM_TOKEN")
-
-    print("Initializing bot...")
-
-    bot = Bot(token, downloader=YouTubeDownloader, converter=AudioConverter)
-
-    print("Starting bot...")
-
+    bot = Bot()
     bot.start()

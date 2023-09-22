@@ -1,3 +1,5 @@
+![GitHub workflow](https://github.com/AnnaBaziruwiha/video-to-audio-bot/actions/workflows/main.yml/badge.svg)
+
 # Video to Audio Bot
 
 This Telegram bot converts YouTube video links into audio files and sends them back to the user. It's designed to handle videos of any duration, and for audio files larger than 50MB (the Telegram limit), it splits them into multiple files.

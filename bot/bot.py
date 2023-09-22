@@ -29,8 +29,8 @@ load_dotenv()
 class Bot:
     """Handles the communication with the Telegram bot"""
 
-    def __init__(self):
-        self.token: str = os.getenv("TELEGRAM_TOKEN", "")
+    def __init__(self, token: str):
+        self.token: str = token
         self.application: Application = Application.builder().token(self.token).build()
 
     async def send_welcome_message(

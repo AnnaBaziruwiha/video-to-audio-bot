@@ -7,7 +7,7 @@ from bot import Bot
 
 @pytest.fixture
 def bot_instance():
-    return Bot()
+    return Bot(token="test")
 
 
 @pytest.fixture

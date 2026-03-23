@@ -1,5 +1,6 @@
 import logging
 import os
+
 from dotenv import load_dotenv
 
 from bot import Bot
@@ -9,5 +10,7 @@ logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
 
 if __name__ == "__main__":
     token = os.getenv("TELEGRAM_TOKEN", "")
+    if not token:
+        raise ValueError("TELEGRAM_TOKEN environment variable is not set")
     bot = Bot(token=token)
     bot.start()

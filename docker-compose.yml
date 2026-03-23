@@ -1,0 +1,11 @@
+services:
+  bot:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - downloads:/app/downloads
+    restart: unless-stopped
+
+volumes:
+  downloads:

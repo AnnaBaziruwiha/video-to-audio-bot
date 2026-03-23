@@ -25,6 +25,8 @@ from utils.constants import (
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 
 class Bot:
     """Handles the communication with the Telegram bot"""
@@ -64,35 +66,23 @@ class Bot:
         }
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(
-                url, download=False
-            )  # Extract info without downloading
-            title = info_dict.get("title", None)  # Get video title
+            info_dict = ydl.extract_info(url, download=False)
+            title = info_dict.get("title", None)
 
             if title:
-                # Replace unwanted characters with an underscore
                 title = re.sub(r'[\\/*?:"<>|]', "_", title)
-                # Get the first 4 words of the title
                 title_words = title.split()[:4]
-                # Form the output file name from the first 4 words of the title
                 filename = f"{'_'.join(title_words)}.mp3"
-                output_path = os.path.join(
-                    output_directory, filename
-                )  # Form the complete output path
-
-                # Update the output path in ydl options
+                output_path = os.path.join(output_directory, filename)
                 ydl.params["outtmpl"] = output_path
-
-                # Download the video
                 ydl.download([url])
-
                 return output_path
 
     async def handle_request(self, update: Update, context: CallbackContext) -> None:
         """Function called when a user sends a message."""
         message = update.message
         if not message:
-            return self.return_invalid_input(update, context)
+            return await self.return_invalid_input(update, context)
         url = self.extract_link(message.text)
         if not url:
             return await self.return_invalid_input(update, context)
@@ -100,20 +90,17 @@ class Bot:
             await context.bot.send_message(
                 chat_id=update.effective_chat.id, text=WAIT_MESSAGE
             )
-            # download audio for this youtube video
             path = self.download_audio(url=url)
             loop = asyncio.get_event_loop()
-            # Run split_audio in a different thread to avoid blocking the event loop
             splits = await loop.run_in_executor(None, self.split_audio, path)
             for split in splits:
-                logging.info(f"Exporting split {split}")
+                logger.info(f"Sending split {split}")
                 with open(split, "rb") as audio_file:
-                    logging.info(f"Sending split {split}")
                     await update.message.reply_audio(
                         audio_file, read_timeout=60, write_timeout=60
                     )
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
             await context.bot.send_message(
                 chat_id=update.effective_chat.id, text=f"Error: {e}"
             )
@@ -121,7 +108,7 @@ class Bot:
         await self.return_success(update, context)
 
     def extract_link(self, message: str) -> Optional[str]:
-        """Extracts the youtube link from the message."""
+        """Extracts the YouTube link from the message."""
         url_regex = r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         urls = re.findall(url_regex, message)
         for url in urls:
@@ -130,15 +117,13 @@ class Bot:
         return None
 
     def _is_youtube_link(self, url: str) -> bool:
-        """Returns True if it's a youtube link"""
+        """Returns True if it's a YouTube link"""
         youtube_regex = (
             r"(https?://)?(www\.)?"
             r"(youtube|youtu|youtube-nocookie)\.(com|be)/"
             r"(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})"
         )
-
-        youtube_regex_match = re.match(youtube_regex, url)
-        return youtube_regex_match is not None
+        return re.match(youtube_regex, url) is not None
 
     @staticmethod
     def _make_chunks(audio: AudioSegment, chunk_length_ms: int) -> List[AudioSegment]:
@@ -149,15 +134,13 @@ class Bot:
         ]
 
     def split_audio(self, audio_path: str, max_size_mb: int = 50) -> List[Any]:
-        # Load the audio file
+        """Splits audio into chunks if it exceeds max_size_mb"""
         audio = AudioSegment.from_file(audio_path)
         audio_size_mb = os.path.getsize(audio_path) / (1024 * 1024)
 
         if audio_size_mb <= max_size_mb:
-            # if the file size is less than or equal to 50 MB, no need to split
             return [audio_path]
 
-        # if the file size is larger than 50 MB, need to split it
         chunk_length_ms = 10 * 60 * 1000
         chunks = self._make_chunks(audio, chunk_length_ms)
 
@@ -171,9 +154,6 @@ class Bot:
 
     async def return_success(self, update: Update, context: CallbackContext) -> None:
         """Returns a success message to the user"""
-        if not context or not update:
-            print("Update or context missing.")
-            return
         await context.bot.send_message(
             chat_id=update.effective_chat.id, text=RESPONSE_MESSAGE
         )

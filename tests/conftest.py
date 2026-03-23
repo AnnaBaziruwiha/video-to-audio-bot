@@ -22,7 +22,7 @@ def mock_telegram_update(mocker):
 
 @pytest.fixture
 def mock_youtube_dl(mocker):
-    return mocker.patch("bot.bot.youtube_dl", autospec=True)
+    return mocker.patch("bot.bot.yt_dlp", autospec=True)
 
 
 @pytest.fixture

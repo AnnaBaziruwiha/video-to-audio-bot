@@ -2,59 +2,72 @@
 
 # Video to Audio Bot
 
-This Telegram bot converts YouTube video links into audio files and sends them back to the user. It's designed to handle videos of any duration, and for audio files larger than 50MB (the Telegram limit), it splits them into multiple files.
+A Telegram bot that converts YouTube links into MP3 audio files and sends them back to the user. Handles videos of any duration — audio files larger than 50MB (Telegram's limit) are automatically split into multiple files.
 
 ## Technologies
 
-This project is created with:
-
-- [Python 3.10.10](https://www.python.org/downloads/release/python-31010/)
+- [Python 3.10](https://www.python.org/downloads/release/python-31012/)
 - [python-telegram-bot 20.3](https://python-telegram-bot.readthedocs.io/en/stable/)
-- [youtube_dl 2022.3.25](https://github.com/ytdl-org/youtube-dl)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) — actively maintained YouTube download library
 - [pydub 0.25.1](http://pydub.com/)
-- [pytest 7.0.1](https://docs.pytest.org/en/latest/)
 - [FFmpeg](https://ffmpeg.org/)
+- [pytest 7.3](https://docs.pytest.org/en/latest/)
+- [Docker](https://www.docker.com/)
 
-Please make sure to update tests as appropriate and keep these versions in mind when contributing.
+## Running with Docker (recommended)
 
-## Setup and Installation
-
-1. Clone this repository:
+1. Clone the repo:
 
 ```bash
 git clone https://github.com/AnnaBaziruwiha/video-to-audio-bot.git
-```
-
-2. Navigate to the project directory:
-
-```bash
 cd video-to-audio-bot
 ```
 
-3. Install the required dependencies:
+2. Create a `.env` file with your Telegram bot token (get one from [@BotFather](https://t.me/BotFather)):
+
+```bash
+cp .env.example .env
+# edit .env and set TELEGRAM_TOKEN
+```
+
+3. Start the bot:
+
+```bash
+docker compose up -d
+```
+
+4. View logs:
+
+```bash
+docker compose logs -f bot
+```
+
+## Running locally
+
+1. Install FFmpeg:
+
+```bash
+# Ubuntu
+sudo apt-get install ffmpeg
+
+# macOS
+brew install ffmpeg
+```
+
+2. Install Python dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. You also need to install FFmpeg or Libav to use pydub:
-
-- For Ubuntu:
+3. Create `.env` with your token:
 
 ```bash
-sudo apt-get install ffmpeg libavcodec-extra
+cp .env.example .env
+# edit .env and set TELEGRAM_TOKEN
 ```
 
-- For Windows, download and extract FFmpeg or Libav from the official website.
-- For MacOS:
-
-```bash
-brew install ffmpeg
-```
-
-5. Create a .env file and save `TELEGRAM_TOKEN` in it.
-
-Start the bot:
+4. Start the bot:
 
 ```bash
 python main.py
@@ -62,11 +75,9 @@ python main.py
 
 ## Usage
 
-Just send any YouTube link to the bot, and it will return an audio file of the video. If the audio file is larger than 50MB, it will be split into multiple files.
+Send any YouTube link to the bot. It will download the audio and send it back as an MP3. Links with playlist parameters (e.g. `?list=...`) are handled — only the single video is downloaded.
 
 ## Running Tests
-
-To run the tests, use the following command:
 
 ```bash
 pytest
@@ -74,4 +85,4 @@ pytest
 
 ## Contributing
 
-Contributions are welcome! Please open an issue if you encounter any problems, or create a pull request if you want to add any new features.
+Contributions are welcome! Please open an issue if you encounter any problems, or create a pull request to add new features.

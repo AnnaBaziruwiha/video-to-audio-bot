@@ -4,7 +4,7 @@ import os
 import re
 from typing import Any, List, Optional
 
-import youtube_dl
+import yt_dlp
 from dotenv import load_dotenv
 from pydub import AudioSegment
 from telegram import Update
@@ -53,9 +53,12 @@ class Bot:
         self.application.add_handler(start_handler)
         self.application.run_polling(1.0)
 
-    def download_audio(self, url: str, output_directory: str = "audio_files/") -> str:
+    def download_audio(self, url: str, output_directory: str = "downloads/") -> str:
+        os.makedirs(output_directory, exist_ok=True)
         ydl_opts = {
             "format": "bestaudio/best",
+            "noplaylist": True,
+            "outtmpl": os.path.join(output_directory, "%(title)s.%(ext)s"),
             "postprocessors": [
                 {
                     "key": "FFmpegExtractAudio",
@@ -65,18 +68,12 @@ class Bot:
             ],
         }
 
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(url, download=False)
-            title = info_dict.get("title", None)
-
-            if title:
-                title = re.sub(r'[\\/*?:"<>|]', "_", title)
-                title_words = title.split()[:4]
-                filename = f"{'_'.join(title_words)}.mp3"
-                output_path = os.path.join(output_directory, filename)
-                ydl.params["outtmpl"] = output_path
-                ydl.download([url])
-                return output_path
+            output_path = ydl.prepare_filename(info_dict)
+            output_path = os.path.splitext(output_path)[0] + ".mp3"
+            ydl.download([url])
+            return output_path
 
     async def handle_request(self, update: Update, context: CallbackContext) -> None:
         """Function called when a user sends a message."""
